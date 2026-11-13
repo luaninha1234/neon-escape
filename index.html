@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Neon Escape</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#070b1c;color:white;font-family:Arial;text-align:center;overflow:hidden}
+h2{margin:12px;color:#00eaff}
+canvas{display:block;margin:auto;background:#0d1530;touch-action:none;border:2px solid #00eaff;border-radius:12px}
+button{margin-top:10px;padding:14px 35px;background:#00eaff;border:0;border-radius:12px;font-weight:bold;font-size:18px}
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Neon Escape">
+</head>
+<body>
+<h2>🚀 NEON ESCAPE</h2>
+<div id="score">Pontos: 0</div>
+<canvas id="game"></canvas>
+<button id="start">JOGAR</button>
+<script>
+const c=document.getElementById('game');
+const x=c.getContext('2d');
+const b=document.getElementById('start');
+c.width=Math.min(innerWidth-20,400);
+c.height=Math.min(innerHeight-150,650);
+let ship,blocks,score,running=false,last=0,spawn=0;
+
+function reset(){
+ship={x:c.width/2,y:c.height-55};
+blocks=[];
+score=0;
+spawn=0;
+last=0;
+running=true;
+b.style.display='none';
+requestAnimationFrame(loop);
+}
+
+function loop(t){
+if(!running)return;
+let dt=Math.min((t-last)/1000||0,.05);
+last=t;
+spawn+=dt;
+if(spawn>.65){
+blocks.push({x:Math.random()*(c.width-32),y:-30});
+spawn=0;
+}
+x.clearRect(0,0,c.width,c.height);
+x.fillStyle='#ff315d';
+for(let o of blocks){
+o.y+=(180+score*.8)*dt;
+x.fillRect(o.x,o.y,32,32);
+if(Math.abs(o.x+16-ship.x)<29&&Math.abs(o.y+16-ship.y)<29){
+running=false;
+b.textContent='RECOMEÇAR';
+b.style.display='inline-block';
+return;
+}
+}
+blocks=blocks.filter(o=>{
+if(o.y>c.height){score++;return false}
+return true;
+});
+x.fillStyle='#00eaff';
+x.beginPath();
+x.moveTo(ship.x,ship.y-25);
+x.lineTo(ship.x-22,ship.y+20);
+x.lineTo(ship.x+22,ship.y+20);
+x.closePath();
+x.fill();
+document.getElementById('score').textContent='Pontos: '+score;
+requestAnimationFrame(loop);
+}
+
+function move(e){
+let r=c.getBoundingClientRect();
+ship.x=Math.max(22,Math.min(c.width-22,e.clientX-r.left));
+}
+c.addEventListener('pointermove',e=>{if(running)move(e)});
+c.addEventListener('pointerdown',e=>{if(running)move(e)});
+b.onclick=reset;
+ship={x:c.width/2,y:c.height-55};
+x.fillStyle='#00eaff';
+x.font='20px Arial';
+x.textAlign='center';
+x.fillText('Toque em JOGAR',c.width/2,c.height/2);
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log('Modo offline ativado'))
+      .catch(err => console.log('Erro:', err));
+  });
+}
+</script>
+
+</body>
+</html>
