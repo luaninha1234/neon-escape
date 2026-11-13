@@ -1,103 +1,14 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Neon Escape</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#070b1c;color:white;font-family:Arial;text-align:center;overflow:hidden}
-h2{margin:12px;color:#00eaff}
-canvas{display:block;margin:auto;background:#0d1530;touch-action:none;border:2px solid #00eaff;border-radius:12px}
-button{margin-top:10px;padding:14px 35px;background:#00eaff;border:0;border-radius:12px;font-weight:bold;font-size:18px}
-</style>
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Neon Escape">
-</head>
-<body>
-<h2>🚀 NEON ESCAPE</h2>
-<div id="score">Pontos: 0</div>
-<canvas id="game"></canvas>
-<button id="start">JOGAR</button>
-<script>
-const c=document.getElementById('game');
-const x=c.getContext('2d');
-const b=document.getElementById('start');
-c.width=Math.min(innerWidth-20,400);
-c.height=Math.min(innerHeight-150,650);
-let ship,blocks,score,running=false,last=0,spawn=0;
-
-function reset(){
-ship={x:c.width/2,y:c.height-55};
-blocks=[];
-score=0;
-spawn=0;
-last=0;
-running=true;
-b.style.display='none';
-requestAnimationFrame(loop);
-}
-
-function loop(t){
-if(!running)return;
-let dt=Math.min((t-last)/1000||0,.05);
-last=t;
-spawn+=dt;
-if(spawn>.65){
-blocks.push({x:Math.random()*(c.width-32),y:-30});
-spawn=0;
-}
-x.clearRect(0,0,c.width,c.height);
-x.fillStyle='#ff315d';
-for(let o of blocks){
-o.y+=(180+score*.8)*dt;
-x.fillRect(o.x,o.y,32,32);
-if(Math.abs(o.x+16-ship.x)<29&&Math.abs(o.y+16-ship.y)<29){
-running=false;
-b.textContent='RECOMEÇAR';
-b.style.display='inline-block';
-return;
-}
-}
-blocks=blocks.filter(o=>{
-if(o.y>c.height){score++;return false}
-return true;
-});
-x.fillStyle='#00eaff';
-x.beginPath();
-x.moveTo(ship.x,ship.y-25);
-x.lineTo(ship.x-22,ship.y+20);
-x.lineTo(ship.x+22,ship.y+20);
-x.closePath();
-x.fill();
-document.getElementById('score').textContent='Pontos: '+score;
-requestAnimationFrame(loop);
-}
-
-function move(e){
-let r=c.getBoundingClientRect();
-ship.x=Math.max(22,Math.min(c.width-22,e.clientX-r.left));
-}
-c.addEventListener('pointermove',e=>{if(running)move(e)});
-c.addEventListener('pointerdown',e=>{if(running)move(e)});
-b.onclick=reset;
-ship={x:c.width/2,y:c.height-55};
-x.fillStyle='#00eaff';
-x.font='20px Arial';
-x.textAlign='center';
-x.fillText('Toque em JOGAR',c.width/2,c.height/2);
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(() => console.log('Modo offline ativado'))
-      .catch(err => console.log('Erro:', err));
-  });
-}
-</script>
-
-</body>
-</html>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#080d20"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Neon Escape"><link rel="manifest" href="manifest.json"><title>Neon Escape 2.0</title><style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050817;color:white;font-family:system-ui,-apple-system,sans-serif;touch-action:none}canvas{display:block;width:100vw;height:100dvh}#hud{position:fixed;top:max(18px,env(safe-area-inset-top));left:16px;right:16px;display:flex;justify-content:space-between;pointer-events:none;font-weight:800;text-shadow:0 0 12px #18eaff}#hud span{display:block;font-size:11px;color:#9baad2;letter-spacing:2px}#hud b{font-size:21px}.panel{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#050817b0,#050817e8);padding:22px}.panel.hidden{display:none}.box{width:min(100%,390px);text-align:center;border:1px solid #2e7aa7;border-radius:24px;padding:24px 18px;background:#0b1435e8;box-shadow:0 0 40px #0acfff22}h1{font-size:36px;line-height:1.1;margin:5px 0 12px;letter-spacing:2px;color:#58efff;text-shadow:0 0 22px #00d9ff}p{color:#bec9e9;line-height:1.5}button{border:0;border-radius:14px;background:linear-gradient(90deg,#1be5ff,#8d5bff);padding:14px 20px;color:#061025;font-size:17px;font-weight:900;margin:6px;min-width:120px}button.secondary{background:#1d2a55;color:#fff;border:1px solid #5067ac}#shopList{display:flex;flex-wrap:wrap;justify-content:center;gap:4px}#shopList button{font-size:13px;min-width:120px}small{color:#aab8dd}
+</style></head><body><canvas id="game"></canvas><div id="hud"><div><span>PONTOS</span><b id="score">0</b></div><div><span>FASE</span><b id="level">1</b></div><div><span>MOEDAS</span><b id="coins">0</b></div></div><div id="menu" class="panel"><div class="box"><div style="font-size:48px">🚀</div><h1>NEON<br>ESCAPE 2.0</h1><p>Desvie dos meteoros, colete moedas e sobreviva no espaço!</p><p id="best">🏆 Recorde: 0</p><button id="play">JOGAR</button><button class="secondary" id="openShop">LOJA 🛒</button><p><small>Arraste o dedo para mover a nave</small></p></div></div><div id="shop" class="panel hidden"><div class="box"><h1>LOJA</h1><p id="wallet"></p><div id="shopList"></div><button class="secondary" id="back">VOLTAR</button></div></div><script>
+const c=document.getElementById('game'),g=c.getContext('2d');let W,H,dpr;function resize(){W=innerWidth;H=innerHeight;dpr=Math.min(devicePixelRatio||1,2);c.width=W*dpr;c.height=H*dpr;g.setTransform(dpr,0,0,dpr,0,0)}addEventListener('resize',resize);resize();
+const $=id=>document.getElementById(id),read=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};let wallet=read('neonWallet',0),best=read('neonBest',0),owned=read('neonOwned',['cyan']),skin=read('neonSkin','cyan');const skins=[['cyan','#32eaff',0],['pink','#ff50bc',15],['gold','#ffd45c',35],['green','#69ff9b',60]];let running=false,ship={x:W/2,y:H-110},objects=[],particles=[],stars=Array.from({length:85},()=>({x:Math.random()*W,y:Math.random()*H,s:Math.random()*2+0.4,v:25+Math.random()*70})),score=0,level=1,earned=0,spawn=0,last=0,elapsed=0,raf=0,audio;
+function sound(freq=440,dur=.09,type='sine'){try{audio??=new(window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),a=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,audio.currentTime);a.gain.setValueAtTime(.09,audio.currentTime);a.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.connect(a);a.connect(audio.destination);o.start();o.stop(audio.currentTime+dur)}catch{}}
+function start(){cancelAnimationFrame(raf);running=true;objects=[];particles=[];score=0;earned=0;level=1;spawn=0;elapsed=0;last=0;ship.x=W/2;ship.y=H-110;$('menu').classList.add('hidden');$('shop').classList.add('hidden');sound(600);raf=requestAnimationFrame(loop)}
+function burst(x,y,color,n=18){for(let i=0;i<n;i++){let a=Math.random()*Math.PI*2,v=60+Math.random()*220;particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,t:.65,color})}}
+function end(){running=false;burst(ship.x,ship.y,'#ff5c9d',36);sound(110,.4,'sawtooth');if(score>best){best=score;save('neonBest',best)}wallet+=earned;save('neonWallet',wallet);$('best').textContent='🏆 Recorde: '+best+'  |  🪙 +'+earned;$('menu').classList.remove('hidden');$('play').textContent='JOGAR NOVAMENTE'}
+function loop(t){let dt=Math.min((t-last)/1000||0,.04);last=t;elapsed+=dt;level=1+Math.floor(score/12);spawn+=dt;let delay=Math.max(.24,.8-level*.045);if(spawn>delay){spawn=0;objects.push({x:25+Math.random()*(W-50),y:-35,r:15+Math.random()*13,coin:Math.random()<.28,rot:0})}update(dt);draw(dt);$('score').textContent=score;$('level').textContent=level;$('coins').textContent=wallet+earned;if(running)raf=requestAnimationFrame(loop)}
+function update(dt){ship.y=H-105;for(let o of objects){o.y+=(180+level*24)*dt;o.rot+=dt*2;let dx=o.x-ship.x,dy=o.y-ship.y;if(Math.hypot(dx,dy)<o.r+15){o.dead=true;if(o.coin){earned++;score+=2;burst(o.x,o.y,'#ffd45c',10);sound(900,.08)}else{end();return}}if(o.y>H+50){o.dead=true;if(!o.coin)score++}}objects=objects.filter(o=>!o.dead);for(let p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.t-=dt}particles=particles.filter(p=>p.t>0)}
+function draw(dt){let bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#070b22');bg.addColorStop(1,'#181043');g.fillStyle=bg;g.fillRect(0,0,W,H);for(let s of stars){s.y+=s.v*(running?dt:.012);if(s.y>H){s.y=0;s.x=Math.random()*W}g.fillStyle='#a7caff';g.globalAlpha=.25+s.s/3;g.fillRect(s.x,s.y,s.s,s.s)}g.globalAlpha=1;for(let o of objects){g.save();g.translate(o.x,o.y);g.rotate(o.rot);g.shadowBlur=22;g.shadowColor=o.coin?'#ffd45c':'#ff3d79';g.fillStyle=o.coin?'#ffd45c':'#fb4775';g.beginPath();if(o.coin){g.arc(0,0,o.r*.75,0,Math.PI*2);g.fill();g.shadowBlur=0;g.fillStyle='#8b5700';g.font='bold 19px system-ui';g.textAlign='center';g.textBaseline='middle';g.fillText('★',0,1)}else{for(let i=0;i<7;i++){let a=i*Math.PI*2/7,r=o.r*(i%2?.85:1.1);i?g.lineTo(Math.cos(a)*r,Math.sin(a)*r):g.moveTo(Math.cos(a)*r,Math.sin(a)*r)}g.closePath();g.fill()}g.restore()}for(let p of particles){g.globalAlpha=Math.max(0,p.t/.65);g.fillStyle=p.color;g.fillRect(p.x,p.y,4,4)}g.globalAlpha=1;if(running){g.save();g.translate(ship.x,ship.y);g.shadowBlur=26;g.shadowColor=skins.find(s=>s[0]===skin)[1];g.fillStyle=skins.find(s=>s[0]===skin)[1];g.beginPath();g.moveTo(0,-29);g.lineTo(-19,19);g.lineTo(0,10);g.lineTo(19,19);g.closePath();g.fill();g.shadowBlur=15;g.fillStyle='#ffb24c';g.fillRect(-5,18,10,12+Math.random()*12);g.restore()}}
+function move(e){if(!running)return;let r=c.getBoundingClientRect();ship.x=Math.max(22,Math.min(W-22,e.clientX-r.left))}c.addEventListener('pointerdown',move);c.addEventListener('pointermove',move);$('play').onclick=start;$('openShop').onclick=()=>{renderShop();$('menu').classList.add('hidden');$('shop').classList.remove('hidden')};$('back').onclick=()=>{$('shop').classList.add('hidden');$('menu').classList.remove('hidden')};function renderShop(){$('wallet').textContent='🪙 Suas moedas: '+wallet;$('shopList').innerHTML='';for(let [id,color,cost] of skins){let b=document.createElement('button');b.className='secondary';b.style.borderColor=color;b.textContent=(skin===id?'✓ ':owned.includes(id)?'Usar ':'🪙 '+cost+' ') + id.toUpperCase();b.onclick=()=>{if(!owned.includes(id)){if(wallet<cost){sound(150);return}wallet-=cost;owned.push(id);save('neonWallet',wallet);save('neonOwned',owned)}skin=id;save('neonSkin',skin);sound(700);renderShop()};$('shopList').appendChild(b)}}$('best').textContent='🏆 Recorde: '+best;draw(0);if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script></body></html>

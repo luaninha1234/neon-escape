@@ -1,9 +1,1 @@
-{
-  "name": "Neon Escape",
-  "short_name": "Neon Escape",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#070b1c",
-  "theme_color": "#00eaff",
-  "icons": []
-}
+{"name":"Neon Escape 2.0","short_name":"Neon Escape","start_url":"./index.html","scope":"./","display":"standalone","background_color":"#050817","theme_color":"#080d20","icons":[]}
